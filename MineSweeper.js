@@ -130,7 +130,7 @@ exports.MineSweeper = function(){
             if(ct.tile == 0) return MineSweeper.ALREADY_OPENED;
             else {
                 var count = 0;
-                
+                //귀찮아서 나중에함 ㅇㅇ
             }
         }
         else if(ct.tile == MineSweeper.BOMB){
