@@ -1,7 +1,8 @@
 exports.MineSweeper = function(){
     function MineSweeper(x, y, b){
         if(x < 2 || y < 2 || b < 1) throw new TypeError("가로세로는 각각 2이상, 폭탄은 1개이상 설정해주세요.");
-
+        if(!x || !y || !b) throw new TypeError("정의되지 않았습니다.");
+        
         this.x = x|0;
         this.y = y|0;
         this.size = this.x * this.y;
