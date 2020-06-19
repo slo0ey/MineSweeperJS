@@ -119,4 +119,6 @@ exports.MineSweeper = function(){
         }
         return "-- MineSweeper("+this.x+"x"+this.y+"/"+this.b+") --\n" + display;          
     }
+
+    return MineSweeper;
 }
