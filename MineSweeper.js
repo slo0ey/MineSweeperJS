@@ -28,7 +28,7 @@ exports.MineSweeper = function(){
     }
 
     MineSweeper.prototype.division = function(xy){
-        return [xy%this.y, xy/this.y];
+        return [xy%this.y, (xy/this.y)|0];
     }
 
     MineSweeper.prototype.sum = function(x,  y){
@@ -36,11 +36,21 @@ exports.MineSweeper = function(){
     }
 
     MineSweeper.prototype.setMine = function(){
-        var nums = new Array(this.size);
-        for(var i in nums) nums.push(i);
-        nums = nums.slice(0, this.b).forEach(v => {
+        var nums = [];
+        for(var i = 0; i < this.size; i++) nums.push(i);
+        
+        (function shuffle(){
+            var i, j, tmp;
+            for(i = nums.length-1; i > 0; i--){
+                j = Math.floor(Math.random() * (i+1));
+                tmp = nums[i]; nums[i] = nums[j]; nums[j] = tmp;
+            }
+        }).bind(this)();
+
+        nums = nums.slice(0, this.b).map(v => {
             return this.division(v);
         });
+        Log.i(nums);
 
         for(var c in nums){
             var cod = nums[c];
@@ -50,7 +60,8 @@ exports.MineSweeper = function(){
                 var aro = MineSweeper.around[a];
                 var newcod = [cod[0]+aro[0], cod[1]+aro[1]];
 
-                if(this.table[newcod[1]][newcod[0]].tile !== 'b'){
+                if(!this.safe(newcod[0], newcod[1])) continue;
+                else if(this.table[newcod[1]][newcod[0]].tile !== 'b'){
                     this.table[newcod[1]][newcod[0]].tile++;
                 }
             }
@@ -78,14 +89,16 @@ exports.MineSweeper = function(){
                     var aro = MineSweeper.around[a];
                     var newcod = [x+aro[0], y+aro[1]];
     
-                    if(!this.table[newcod[1]][newcod[0]].opened && this.table[newcod[1]][newcod[0]].flag) subcount++;
+                    if(!this.safe(newcod[0], newcod[1])) continue;
+                    else if(!this.table[newcod[1]][newcod[0]].opened && this.table[newcod[1]][newcod[0]].flag) subcount++;
                 }
                 if(subcount == count){
                     for(var a in MineSweeper.around){
                         var aro = MineSweeper.around[a];
                         var newcod = [x+aro[0], y+aro[1]];
         
-                        if(!this.table[newcod[1]][newcod[0]].opened){
+                        if(!this.safe(newcod[0], newcod[1])) continue;
+                        else if(!this.table[newcod[1]][newcod[0]].opened){
                             this.open(newcod[0], newcod[1]);
                         }
                     }
@@ -98,7 +111,8 @@ exports.MineSweeper = function(){
                     var aro = MineSweeper.around[a];
                     var newcod = [x+aro[0], y+aro[1]];
     
-                    if(!this.table[newcod[1]][newcod[0]].opened){
+                    if(!this.safe(newcod[0], newcod[1])) continue;
+                    else if(!this.table[newcod[1]][newcod[0]].opened){
                         this.open(newcod[0], newcod[1]);
                     }
                 }
@@ -120,7 +134,7 @@ exports.MineSweeper = function(){
                         if(current.opened) dis+=current.tile;
                         else{
                             if(current.flag) dis+='f';
-                            else dis+=9;
+                            else dis+='u';
                         }
                         break;
                     case 1:
