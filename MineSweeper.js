@@ -109,6 +109,38 @@ exports.MineSweeper = function(){
         }
     }
 
+    MineSweeper.prototype.display = function(option){
+        var dis = "";
+        for(var i = 0; i < this.y; i++){
+            dis+="\n";
+            for(var k = 0; k < this.x; k++){
+                var current = this.table[i][k];
+                switch(option){ //0 to normal, 1 to died, 2 to the answer
+                    case 0:
+                        if(current.opened) dis+=current.tile;
+                        else{
+                            if(current.flag) dis+='f';
+                            else dis+=9;
+                        }
+                        break;
+                    case 1:
+                        if((current.opened && current.tile == 'b') || (current.flag && current.tile !== 'b')) dis+='x';
+                        else{
+                            if(current.flag) dis+='f';
+                            else dis+=current.tile;
+                        }
+                        break;
+                    case 2:
+                        dis+=current.tile;
+                        break;
+                    default:
+                        dis+=current.tile;
+                }
+            }
+        }
+        return dis.substring(1);
+    }
+
     MineSweeper.prototype.toString = function(){
         var display = "";
         for(var i = 0; i < this.y; i++){
